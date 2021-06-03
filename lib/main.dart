@@ -1,120 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:mark/lable.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(MyApp());
+}
 
-/// This is the main application widget.
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
-
-  static const String _title = 'Flutter Code Sample';
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: _title,
-      home: MyStatefulWidget(),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primaryColor: Colors.blueGrey[600],
+      ),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-/// This is the stateful widget that the main application instantiates.
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key key}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
 
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-/// This is the private State class that goes with MyStatefulWidget
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  List<int> bottom = <int>[0];
-  String title, content;
-
-  @override
-  Widget build(BuildContext context) {
-    const Key centerKey = ValueKey<String>('bottom-sliver-list');
-
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('title'),
-        ),
-        body: ListTile(
-          title: Text('title'),
-          subtitle: Text(
-            'hello',
-            maxLines: 1,
-          ),
-        ));
-  }
-}
-
-class SecondRoute extends StatelessWidget {
+class _MyHomePageState extends State<MyHomePage> {
+  final List<String> entries = <String>['A', 'B', 'C'];
+  final List<int> colorCodes = <int>[100, 200, 300, 400, 500];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("内容详情"),
+        title: Text(widget.title),
       ),
-      body: Center(child: Text('内容详情')),
+      body: Center(
+        child: ListView.separated(
+          padding: const EdgeInsets.all(8),
+          itemCount: entries.length * 10,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              color: Colors.blueAccent,
+              elevation: 20.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
+
+              clipBehavior: Clip.antiAlias,
+              semanticContainer: false,
+              child: Container(
+                height: 100,
+                color: Colors.blueGrey[colorCodes[index % colorCodes.length]],
+                child: ListTile(
+                  leading: Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: NetworkImage(
+                                'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                            fit: BoxFit.fill)),
+                  ),
+                  title: Text("Web3极客日报 #525 | Rebase Network | Rebase社区"),
+                  subtitle: Lable('一枚有态度的程序员'),
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) =>
+              const Divider(),
+        ),
+      ),
     );
   }
 }
-
-
-// CustomScrollView(
-//         center: centerKey,
-//         slivers: <Widget>[
-//           SliverList(
-//             key: centerKey,
-//             delegate: SliverChildBuilderDelegate(
-//               (BuildContext context, int index) {
-//                 return Container(
-//                     alignment: Alignment.center,
-//                     color: Colors.blue[200 + bottom[index] % 4 * 100],
-//                     height: 100 + bottom[index] % 4 * 20.0,
-//                     child: GestureDetector(
-//                         child: Column(
-//                           children: [
-//                             Text(title),
-//                             Text(content),
-//                           ]
-//                           ),
-//                         onTap: () {
-//                           Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) => SecondRoute()),
-//                           );
-//                         })
-//                     // ElevatedButton(
-//                     //     child: Text("哈哈"),
-//                     //     onPressed: () {
-//                     //       Navigator.push(
-//                     //         context,
-//                     //         MaterialPageRoute(
-//                     //             builder: (context) => SecondRoute()),
-//                     //       );
-//                     //     }));
-//                     );
-//               },
-//               childCount: bottom.length,
-//             ),
-//           ),
-//         ],
-//       ),
-
-// Scaffold(
-//       appBar: AppBar(
-//         title: const Text('技术猫'),
-//         leading: IconButton(
-//           icon: const Icon(Icons.add),
-//           onPressed: () {
-//             setState(() {
-//               bottom.add(bottom.length);
-//             });
-//           },
-//         ),
-//       ),
-//       body: 
-      
-//     );
