@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverswords/mark/pkg/mark/model/mysql"
+	tag "github.com/silverswords/mark/pkg/tag/model/mysql"
 )
 
 type MarkController struct {
@@ -71,6 +72,16 @@ func (mc *MarkController) listMark(c *gin.Context) {
 		_ = c.Error(err)
 		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
 		return
+	}
+
+	for _, mark := range marks {
+		tags, err := tag.SelectTagByMarkID(mc.db, mark.ID)
+		if err != nil {
+			_ = c.Error(err)
+			c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
+			return
+		}
+		mark.Tags = tags
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "marks": marks})

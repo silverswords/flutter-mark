@@ -9,10 +9,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	mark "github.com/silverswords/mark/pkg/mark/controller"
+	tag "github.com/silverswords/mark/pkg/tag/controller"
 )
 
 const (
 	markRouterGroup = "/api/v1/mark"
+	tagRouterGroup  = "/api/v1/tag"
 )
 
 func main() {
@@ -27,7 +29,10 @@ func main() {
 	}
 
 	markController := mark.New(db)
+	tagController := tag.New(db)
+
 	markController.RegistRouter(router.Group(markRouterGroup))
+	tagController.RegistRouter(router.Group(tagRouterGroup))
 
 	log.Fatal(router.Run("0.0.0.0:10001"))
 }
