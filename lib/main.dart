@@ -1,9 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import './lable.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
+
+import './lable.dart';
+import './addLable.dart';
 
 void main() {
   runApp(MyApp());
@@ -42,8 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
     0xffe8e8e4,
   ];
 
-  var _labal = '';
-  final _formKey = GlobalKey<FormState>();
   Future<List<Mark>> marks;
 
   @override
@@ -75,20 +74,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
           child: FutureBuilder<List<Mark>>(
-        future: marks,
+        future: _getMarks(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          // if (snapshot.connectionState == ConnectionState.done) {
-          //   if (snapshot.hasError) {
-          //     return Text("Error: ${snapshot.error}");
-          //   }
-          // } else {
-          //   return CircularProgressIndicator();
-          // }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return Text("Error: ${snapshot.error}");
+            }
+          } else {
+            return CircularProgressIndicator();
+          }
 
+          var marks = snapshot.data as List<Mark>;
           // return Text("${snapshot.data}");
           return ListView.separated(
             padding: const EdgeInsets.all(8),
-            itemCount: entries.length * 10,
+            itemCount: marks.length,
             itemBuilder: (BuildContext context, int index) {
               return Card(
                 color: Colors.blueAccent,
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ListTile(
                     leading: GestureDetector(
                       onTap: () {
-                        _launchURL('https://flutter.dev');
+                        _launchURL(marks[index].url);
                       },
                       child: Container(
                         height: 40,
@@ -119,10 +119,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     title: GestureDetector(
                       onTap: () {
-                        _launchURL('https://flutter.dev');
+                        _launchURL(marks[index].url);
                       },
                       child: Text(
-                        "Google Removes Diversity Head over Shocking ‘If I Were a Jew’ Blog",
+                        marks[index].title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -131,81 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Lable('日报'),
                         Lable('Network'),
-                        GestureDetector(
-                            onTap: () {
-                              AwesomeDialog dialog;
-                              dialog = AwesomeDialog(
-                                context: context,
-                                animType: AnimType.SCALE,
-                                dialogType: DialogType.QUESTION,
-                                keyboardAware: true,
-                                body: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Form(
-                                      key: _formKey,
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Material(
-                                            elevation: 0,
-                                            color:
-                                                Colors.blueGrey.withAlpha(40),
-                                            child: TextFormField(
-                                              onSaved: (value) {
-                                                _labal = value;
-                                              },
-                                              autofocus: true,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              // maxLengthEnforced: true,
-                                              minLines: 2,
-                                              maxLines: null,
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                labelText: 'Description',
-                                                prefixIcon: Icon(
-                                                  Icons.text_fields,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          AnimatedButton(
-                                            color: Colors.orange,
-                                            pressEvent: () {
-                                              dialog.dissmiss();
-
-                                              if (_formKey.currentState
-                                                  .validate()) {
-                                                _formKey.currentState.save();
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                        content: Text(_labal)));
-                                              }
-                                            },
-                                            text: 'Submit',
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          AnimatedButton(
-                                              text: 'Close',
-                                              pressEvent: () {
-                                                dialog.dissmiss();
-                                              })
-                                        ],
-                                      ),
-                                    )
-                                    // child:
-                                    ),
-                              )..show();
-                            },
-                            child: Lable("添加")),
+                        AddLable(marks[index].id),
                       ],
                     ),
                   ),
