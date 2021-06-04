@@ -17,6 +17,7 @@ type Mark struct {
 	ID    uint32     `json:"id,omitempty"`
 	Url   string     `json:"url,omitempty"`
 	Title string     `json:"title,omitempty"`
+	Icon  string     `json:"icon,omitempty"`
 	Tags  []*tag.Tag `json:"tags,omitempty"`
 }
 
@@ -37,11 +38,12 @@ var (
 		mysqlMarkCreateTable: fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s.%s(
 		id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 		url VARCHAR(512) NOT NULL DEFAULT '' COMMENT '地址',
-		title VARCHAR(512) NOT NULL DEFAULT '' COMMENT '标题'
+		title VARCHAR(512) NOT NULL DEFAULT '' COMMENT '标题',
+		icon VARCHAR(512) NOT NULL DEFAULT '' COMMENT '图标'
 	)ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_bin;`, DBName, MarkTableName),
-		mysqlMarkInsert: fmt.Sprintf(`INSERT INTO %s.%s (url, title) VALUES (?,?)`, DBName, MarkTableName),
+		mysqlMarkInsert: fmt.Sprintf(`INSERT INTO %s.%s (url, title, icon) VALUES (?,?,?)`, DBName, MarkTableName),
 		mysqlMarkDelete: fmt.Sprintf(`DELETE FROM %s.%s WHERE id=? LIMIT 1`, DBName, MarkTableName),
-		mysqlMarkSelect: fmt.Sprintf(`SELECT id, url, title FROM %s.%s`, DBName, MarkTableName),
+		mysqlMarkSelect: fmt.Sprintf(`SELECT id, url, title, icon FROM %s.%s`, DBName, MarkTableName),
 	}
 )
 
@@ -64,8 +66,8 @@ func CreateTable(db *sql.DB) error {
 }
 
 // InsertMark insert a new mark
-func InsertMark(db *sql.DB, url, title string) error {
-	result, err := db.Exec(markSQLString[mysqlMarkInsert], url, title)
+func InsertMark(db *sql.DB, url, title, icon string) error {
+	result, err := db.Exec(markSQLString[mysqlMarkInsert], url, title, icon)
 	if err != nil {
 		return err
 	}
@@ -98,6 +100,7 @@ func SelectMark(db *sql.DB) ([]*Mark, error) {
 		ID    uint32
 		Url   string
 		Title string
+		Icon  string
 	)
 
 	rows, err := db.Query(markSQLString[mysqlMarkSelect])
@@ -107,7 +110,7 @@ func SelectMark(db *sql.DB) ([]*Mark, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&ID, &Url, &Title); err != nil {
+		if err := rows.Scan(&ID, &Url, &Title, &Icon); err != nil {
 			return nil, err
 		}
 
@@ -115,6 +118,7 @@ func SelectMark(db *sql.DB) ([]*Mark, error) {
 			ID:    ID,
 			Url:   Url,
 			Title: Title,
+			Icon:  Icon,
 		}
 
 		marks = append(marks, mark)

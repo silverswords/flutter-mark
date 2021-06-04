@@ -2,10 +2,10 @@ package controller
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/badoux/goscraper"
 	"github.com/gin-gonic/gin"
 	"github.com/silverswords/mark/pkg/mark/model/mysql"
 	tag "github.com/silverswords/mark/pkg/tag/model/mysql"
@@ -49,18 +49,22 @@ func (mc *MarkController) insert(c *gin.Context) {
 			// Title string `json:"title,omitempty"`
 		}
 	)
-	var body []byte
-	c.Request.Body.Read(body)
-	fmt.Println(string(body))
+
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		_ = c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest})
 		return
 	}
-	fmt.Println(req)
 
-	// err = mysql.InsertMark(mc.db, req.Url, req.Title)
+	s, err := goscraper.Scrape(req.Url, 5)
+	if err != nil {
+		_ = c.Error(err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest})
+		return
+	}
+
+	err = mysql.InsertMark(mc.db, req.Url, s.Preview.Title, s.Preview.Icon)
 	if err != nil {
 		_ = c.Error(err)
 		c.JSON(http.StatusAlreadyReported, gin.H{"status": http.StatusAlreadyReported, "err": "重复创建用户"})

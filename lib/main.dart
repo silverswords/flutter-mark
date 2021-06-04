@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,11 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HakerMake',
+      title: 'flutter',
       theme: ThemeData(
-        primaryColor: Color(0xffe8e8e4),
+        primaryColor: Color(0xff7EC87C),
       ),
-      home: MyHomePage(title: 'HakerMake'),
+      home: MyHomePage(title: 'flutter'),
     );
   }
 }
@@ -37,29 +36,28 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<String> entries = <String>['A', 'B', 'C'];
   final List<int> colorCodes = <int>[
-    0xffd8e2dc,
-    0xffece4db,
-    0xffffe5d9,
-    0xffffd7ba,
-    0xfffcd5ce,
-    0xfffae1dd,
-    0xffe8e8e4,
+    0xffFCFED3,
+    0xffF5FBB7,
+    0xffF0F9B4,
+    0xffE3F5AB,
+    0xffC6E89A,
+    0xffC5E799,
+    0xffA9DB8C,
+    0xffC6E89A,
+    0xffF5FBB7,
   ];
   final List<int> tagsColorCodes = <int>[
-    // 0xfff94144,
-    // 0xfff3722c,
-    // 0xfff8961e,
-    // 0xfff9844a,
-    // 0xfff9c74f,
-    0xff90be6d,
-    0xff43aa8b,
-    0xff4d908e,
-    0xff577590,
-    0xff277da1,
+    0xff40bf80,
+    0xff39ac73,
+    0xff339966,
+    0xff2d8659,
+    0xff26734d,
   ];
+
   List<Mark> marks = List.empty();
   String inputValue;
 
+  final TextEditingController _controller = new TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -89,37 +87,54 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFEFFE3),
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: Column(children: <Widget>[
-        Row(children: <Widget>[
-          Expanded(
-              child: Container(
-                  // height: 20,
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: TextField(
-                    autofocus: true,
-                    // decoration: InputDecoration(
-                    //     labelText: "用户名",
-                    //     hintText: "用户名或邮箱",
-                    //     prefixIcon: Icon(Icons.person)),
-                  ))),
-          Container(
-            height: 40,
-            width: 100,
-            margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+        Row(
+          children: <Widget>[
+            Expanded(
+                child: Container(
+                    // height: 20,
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: TextField(
+                      controller: _controller,
+                      onChanged: (val) {
+                        setState(() {
+                          inputValue = val;
+                        });
+                      },
+                      autofocus: true,
+                    ))),
+            Container(
+              height: 40,
+              width: 100,
+              margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Color(0xff7EC87C)),
+                ),
+                onPressed: () {
+                  _insertMark(inputValue).then((result) {
+                    Fluttertoast.showToast(
+                        msg: result,
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    _controller.clear();
+                    refresh();
+                  });
+                },
+                child: Text('分享'),
               ),
-              onPressed: () => {
-                post("http://61ce0e379174.ngrok.io").then((val) => print(val))
-              },
-              child: Text('分享'),
-            ),
-          )
-        ]),
+            )
+          ],
+        ),
         Expanded(
             child: Center(
                 child: ListView.separated(
@@ -130,12 +145,12 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.blueAccent,
               elevation: 20.0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               clipBehavior: Clip.antiAlias,
               semanticContainer: false,
               child: Container(
-                // height: 80,
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                 color: Color(colorCodes[index % colorCodes.length]),
                 child: ListTile(
                   leading: GestureDetector(
@@ -148,8 +163,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                              image: marks[index].icon.startsWith("http")
+                                  ? () {
+                                      ImageProvider<Object> result;
+                                      try {
+                                        result =
+                                            NetworkImage(marks[index].icon);
+                                      } catch (Expection) {
+                                        result = AssetImage(
+                                            "assets/images/default.png");
+                                      }
+                                      return result;
+                                    }()
+                                  : AssetImage("assets/images/default.png"),
                               fit: BoxFit.fill)),
                     ),
                   ),
@@ -193,8 +219,20 @@ class _MyHomePageState extends State<MyHomePage> {
                               combine: ItemTagsCombine.withTextBefore,
                               removeButton: ItemTagsRemoveButton(
                                 onRemoved: () {
-                                  _deleteTag(item.relationID)
-                                      .then(() => {refresh()});
+                                  _deleteTag(item.relationID).then((result) {
+                                    refresh();
+                                    Fluttertoast.showToast(
+                                        msg: result,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                    return true;
+                                  });
+                                  // refresh();
+
                                   return true;
                                 },
                               ),
@@ -220,9 +258,10 @@ class Mark {
   int id;
   String url;
   String title;
+  String icon;
   List<TagRelation> tags;
 
-  Mark({this.id, this.url, this.title, this.tags});
+  Mark({this.id, this.url, this.title, this.icon, this.tags});
 
   factory Mark.fromJson(Map<String, dynamic> json) {
     List<TagRelation> tags = List.empty(growable: true);
@@ -236,6 +275,7 @@ class Mark {
       id: json['id'],
       url: json['url'],
       title: json['title'],
+      icon: json['icon'],
       tags: tags,
     );
   }
@@ -257,7 +297,7 @@ class TagRelation {
 void _launchURL(String url) async =>
     await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 
-_deleteTag(int id) async {
+Future<String> _deleteTag(int id) async {
   var url = Uri.parse('https://dovics.cn.utools.club/api/v1/tag/delete');
   var response = await http.post(
     url,
@@ -266,7 +306,11 @@ _deleteTag(int id) async {
     }),
   );
 
-  if (response.statusCode != 200) {}
+  if (response.statusCode != 200) {
+    return "删除失败";
+  }
+
+  return "删除成功";
 }
 
 void onShare() {
@@ -277,17 +321,16 @@ void onShare() {
   );
 }
 
-Future<String> post(String url) async {
-  var URL = Uri.parse(url);
-  HttpClient httpClient = new HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(URL);
+Future<String> _insertMark(String url) async {
+  var uri = Uri.parse("https://dovics.cn.utools.club/api/v1/mark/insert");
+  var response = await http.post(
+    uri,
+    body: jsonEncode(<String, dynamic>{"url": url}),
+  );
 
-  Map jsonMap = {'url': '1'};
-  request.add(utf8.encode(json.encode(jsonMap)));
+  if (response.statusCode != 200) {
+    return "添加失败";
+  }
 
-  HttpClientResponse response = await request.close();
-
-  String resp = await response.transform(utf8.decoder).join();
-
-  return resp;
+  return "添加成功";
 }

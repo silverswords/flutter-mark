@@ -1,15 +1,18 @@
 import 'dart:convert';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 
+typedef void VoidCallback();
+
 class AddTag extends StatelessWidget {
   AddTag(this.id, this.index, {Key key, this.refresh}) : super(key: key);
   final int id;
   final int index;
-  Function refresh;
+  final void Function() refresh;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class AddTag extends StatelessWidget {
       key: Key(index.toString()),
       index: index, // required
       title: "add",
-      activeColor: Color(0xff89b0ae),
+      activeColor: Color(0xff26734d),
       textStyle: TextStyle(
         fontSize: 12,
       ),
@@ -70,11 +73,22 @@ class AddTag extends StatelessWidget {
                     AnimatedButton(
                       color: Colors.orange,
                       pressEvent: () {
-                        dialog.dissmiss();
-
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
-                          _insertTag(id, _labal).then(() => {refresh()});
+                          _insertTag(id, _labal).then((result) {
+                            Fluttertoast.showToast(
+                                msg: result,
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+
+                            refresh();
+                            dialog.dissmiss();
+                            return true;
+                          });
                         }
                       },
                       text: 'Submit',
@@ -108,17 +122,9 @@ _insertTag(int markID, String tagName) async {
     }),
   );
 
-  if (response.statusCode != 200) {}
-}
+  if (response.statusCode != 200) {
+    return "添加失败";
+  }
 
-_deleteTag(int id) async {
-  var url = Uri.parse('https://dovics.cn.utools.club/api/v1/tag/delete');
-  var response = await http.post(
-    url,
-    body: jsonEncode(<String, dynamic>{
-      'id': id,
-    }),
-  );
-
-  if (response.statusCode != 200) {}
+  return "添加成功";
 }
