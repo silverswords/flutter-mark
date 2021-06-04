@@ -25,7 +25,8 @@ dependencies:
     sdk: flutter
   awesome_dialog: ^1.3.2
   flutter_wall_layout: ^1.0.0
-
+  url_launcher: ^6.0.6
+  http: ^0.13.3
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -33,8 +34,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  url_launcher: ^6.0.6
-  awesome_dialog: ^1.3.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
