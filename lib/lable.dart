@@ -22,22 +22,3 @@ class Lable extends StatelessWidget {
     );
   }
 }
-
-// AnimatedButton(
-//                         text: 'Warning Dialog',
-//                         color: Colors.orange,
-//                         pressEvent: () {
-//                           AwesomeDialog(
-//                               context: context,
-//                               dialogType: DialogType.WARNING,
-//                               headerAnimationLoop: false,
-//                               animType: AnimType.TOPSLIDE,
-//                               showCloseIcon: true,
-//                               closeIcon: Icon(Icons.close_fullscreen_outlined),
-//                               title: 'Warning',
-//                               desc: 'Dialog description here',
-//                               btnCancelOnPress: () {},
-//                               btnOkOnPress: () {})
-//                             ..show();
-//                         },
-//                       ),
