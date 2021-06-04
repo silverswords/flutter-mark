@@ -23,7 +23,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(Cors())
-	db, err := sql.Open("mysql", "root:123456@tcp(0.0.0.0:3306)/project?charset=utf8mb4&parseTime=true&loc=Local")
+	db, err := sql.Open("mysql", "root:123456@tcp(192.168.0.35:3306)/project?charset=utf8mb4&parseTime=true&loc=Local")
 	if err != nil {
 		panic(err)
 	}

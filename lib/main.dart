@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,11 +58,13 @@ class _MyHomePageState extends State<MyHomePage> {
     0xff277da1,
   ];
   List<Mark> marks = List.empty();
+  String inputValue;
 
   @override
   void initState() {
     super.initState();
     _getMarks();
+    inputValue = '';
   }
 
   void refresh() {
@@ -88,95 +92,126 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-          child: ListView.separated(
-        padding: const EdgeInsets.all(8),
-        itemCount: marks.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            color: Colors.blueAccent,
-            elevation: 20.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+      body: Column(children: <Widget>[
+        Row(children: <Widget>[
+          Expanded(
+              child: Container(
+                  // height: 20,
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: TextField(
+                    autofocus: true,
+                    // decoration: InputDecoration(
+                    //     labelText: "用户名",
+                    //     hintText: "用户名或邮箱",
+                    //     prefixIcon: Icon(Icons.person)),
+                  ))),
+          Container(
+            height: 40,
+            width: 100,
+            margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () => {
+                post("http://61ce0e379174.ngrok.io").then((val) => print(val))
+              },
+              child: Text('分享'),
             ),
-            clipBehavior: Clip.antiAlias,
-            semanticContainer: false,
-            child: Container(
-              // height: 80,
-              color: Color(colorCodes[index % colorCodes.length]),
-              child: ListTile(
-                leading: GestureDetector(
-                  onTap: () {
-                    _launchURL(marks[index].url);
-                  },
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                            fit: BoxFit.fill)),
+          )
+        ]),
+        Expanded(
+            child: Center(
+                child: ListView.separated(
+          padding: const EdgeInsets.all(8),
+          itemCount: marks.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              color: Colors.blueAccent,
+              elevation: 20.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
+              clipBehavior: Clip.antiAlias,
+              semanticContainer: false,
+              child: Container(
+                // height: 80,
+                color: Color(colorCodes[index % colorCodes.length]),
+                child: ListTile(
+                  leading: GestureDetector(
+                    onTap: () {
+                      _launchURL(marks[index].url);
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                              fit: BoxFit.fill)),
+                    ),
                   ),
-                ),
-                title: GestureDetector(
-                  onTap: () {
-                    _launchURL(marks[index].url);
-                  },
-                  child: Text(
-                    marks[index].title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 16),
+                  title: GestureDetector(
+                    onTap: () {
+                      _launchURL(marks[index].url);
+                    },
+                    child: Text(
+                      marks[index].title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
-                ),
-                subtitle: Container(
-                  margin: EdgeInsets.only(top: 5),
-                  child: Row(
-                    children: [
-                      Tags(
-                        itemCount: marks[index].tags.length + 1,
-                        itemBuilder: (int tagIndex) {
-                          if (tagIndex >= marks[index].tags.length) {
-                            return AddTag(
-                              marks[index].id,
-                              tagIndex,
-                              refresh: refresh,
+                  subtitle: Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Row(
+                      children: [
+                        Tags(
+                          itemCount: marks[index].tags.length + 1,
+                          itemBuilder: (int tagIndex) {
+                            if (tagIndex >= marks[index].tags.length) {
+                              return AddTag(
+                                marks[index].id,
+                                tagIndex,
+                                refresh: refresh,
+                              );
+                            }
+
+                            final item = marks[index].tags[tagIndex];
+
+                            return ItemTags(
+                              key: Key(tagIndex.toString()),
+                              index: tagIndex,
+                              title: item.name,
+                              textStyle: TextStyle(
+                                fontSize: 12,
+                              ),
+                              activeColor: Color(tagsColorCodes[
+                                  tagIndex % tagsColorCodes.length]),
+                              combine: ItemTagsCombine.withTextBefore,
+                              removeButton: ItemTagsRemoveButton(
+                                onRemoved: () {
+                                  _deleteTag(item.relationID)
+                                      .then(() => {refresh()});
+                                  return true;
+                                },
+                              ),
                             );
-                          }
-
-                          final item = marks[index].tags[tagIndex];
-
-                          return ItemTags(
-                            key: Key(tagIndex.toString()),
-                            index: tagIndex,
-                            title: item.name,
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                            ),
-                            activeColor: Color(tagsColorCodes[
-                                tagIndex % tagsColorCodes.length]),
-                            combine: ItemTagsCombine.withTextBefore,
-                            removeButton: ItemTagsRemoveButton(
-                              onRemoved: () {
-                                _deleteTag(item.relationID)
-                                    .then(() => {refresh()});
-                                return true;
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
-      )),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) =>
+              const Divider(),
+        )))
+      ]),
     );
   }
 }
@@ -232,4 +267,27 @@ _deleteTag(int id) async {
   );
 
   if (response.statusCode != 200) {}
+}
+
+void onShare() {
+  // var resp = await post("http://61ce0e379174.ngrok.io/api/v1/mark/insert");
+
+  Fluttertoast.showToast(
+    msg: 'hello',
+  );
+}
+
+Future<String> post(String url) async {
+  var URL = Uri.parse(url);
+  HttpClient httpClient = new HttpClient();
+  HttpClientRequest request = await httpClient.postUrl(URL);
+
+  Map jsonMap = {'url': '1'};
+  request.add(utf8.encode(json.encode(jsonMap)));
+
+  HttpClientResponse response = await request.close();
+
+  String resp = await response.transform(utf8.decoder).join();
+
+  return resp;
 }

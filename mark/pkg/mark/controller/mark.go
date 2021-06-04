@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -44,19 +45,22 @@ func (mc *MarkController) RegistRouter(r gin.IRouter) {
 func (mc *MarkController) insert(c *gin.Context) {
 	var (
 		req struct {
-			Url   string `json:"url,omitempty"`
-			Title string `json:"title,omitempty"`
+			Url string `json:"url,omitempty"`
+			// Title string `json:"title,omitempty"`
 		}
 	)
-
+	var body []byte
+	c.Request.Body.Read(body)
+	fmt.Println(string(body))
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		_ = c.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest})
 		return
 	}
+	fmt.Println(req)
 
-	err = mysql.InsertMark(mc.db, req.Url, req.Title)
+	// err = mysql.InsertMark(mc.db, req.Url, req.Title)
 	if err != nil {
 		_ = c.Error(err)
 		c.JSON(http.StatusAlreadyReported, gin.H{"status": http.StatusAlreadyReported, "err": "重复创建用户"})
