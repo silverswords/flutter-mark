@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mark/lable.dart';
+import './lable.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primaryColor: Colors.blueGrey[600],
+        primaryColor: Color(0xffe8e8e4),
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -28,7 +30,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<String> entries = <String>['A', 'B', 'C'];
-  final List<int> colorCodes = <int>[100, 200, 300, 400, 500];
+  final List<int> colorCodes = <int>[
+    0xffd8e2dc,
+    0xffece4db,
+    0xffffe5d9,
+    0xffffd7ba,
+    0xfffcd5ce,
+    0xfffae1dd,
+    0xffe8e8e4,
+  ];
+
+  var _labal = '';
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,25 +60,117 @@ class _MyHomePageState extends State<MyHomePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),
-
               clipBehavior: Clip.antiAlias,
               semanticContainer: false,
               child: Container(
-                height: 100,
-                color: Colors.blueGrey[colorCodes[index % colorCodes.length]],
+                height: 80,
+                color: Color(colorCodes[index % colorCodes.length]),
                 child: ListTile(
-                  leading: Container(
-                    height: 30,
-                    width: 30,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                            fit: BoxFit.fill)),
+                  leading: GestureDetector(
+                    onTap: () {
+                      _launchURL('https://flutter.dev');
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                              fit: BoxFit.fill)),
+                    ),
                   ),
-                  title: Text("Web3极客日报 #525 | Rebase Network | Rebase社区"),
-                  subtitle: Lable('一枚有态度的程序员'),
+                  title: GestureDetector(
+                    onTap: () {
+                      _launchURL('https://flutter.dev');
+                    },
+                    child: Text(
+                      "Google Removes Diversity Head over Shocking ‘If I Were a Jew’ Blog",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Lable('日报'),
+                      Lable('Network'),
+                      GestureDetector(
+                          onTap: () {
+                            AwesomeDialog dialog;
+                            dialog = AwesomeDialog(
+                              context: context,
+                              animType: AnimType.SCALE,
+                              dialogType: DialogType.QUESTION,
+                              keyboardAware: true,
+                              body: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Material(
+                                          elevation: 0,
+                                          color: Colors.blueGrey.withAlpha(40),
+                                          child: TextFormField(
+                                            onSaved: (value) {
+                                              _labal = value;
+                                            },
+                                            autofocus: true,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            // maxLengthEnforced: true,
+                                            minLines: 2,
+                                            maxLines: null,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              labelText: 'Description',
+                                              prefixIcon: Icon(
+                                                Icons.text_fields,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        AnimatedButton(
+                                          color: Colors.orange,
+                                          pressEvent: () {
+                                            dialog.dissmiss();
+
+                                            if (_formKey.currentState
+                                                .validate()) {
+                                              _formKey.currentState.save();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(_labal)));
+                                            }
+                                          },
+                                          text: 'Submit',
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        AnimatedButton(
+                                            text: 'Close',
+                                            pressEvent: () {
+                                              dialog.dissmiss();
+                                            })
+                                      ],
+                                    ),
+                                  )
+                                  // child:
+                                  ),
+                            )..show();
+                          },
+                          child: Lable("添加")),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -76,3 +182,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+void _launchURL(String url) async =>
+    await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
