@@ -34,7 +34,7 @@ class AddTag extends StatelessWidget {
         dialog = AwesomeDialog(
           context: context,
           animType: AnimType.SCALE,
-          dialogType: DialogType.QUESTION,
+          dialogType: DialogType.INFO,
           keyboardAware: true,
           body: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -71,7 +71,7 @@ class AddTag extends StatelessWidget {
                       height: 10,
                     ),
                     AnimatedButton(
-                      color: Colors.orange,
+                      color: Colors.blue,
                       pressEvent: () {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
@@ -113,7 +113,7 @@ class AddTag extends StatelessWidget {
 }
 
 _insertTag(int markID, String tagName) async {
-  var url = Uri.parse('https://dovics.cn.utools.club/api/v1/tag/insert');
+  var url = Uri.parse('http://39.105.131.39:10001/api/v1/tag/insert');
   var response = await http.post(
     url,
     body: jsonEncode(<String, dynamic>{

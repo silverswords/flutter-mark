@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _getMarks() async {
-    var url = Uri.parse('https://dovics.cn.utools.club/api/v1/mark/list');
+    var url = Uri.parse('http://39.105.131.39:10001/api/v1/mark/list');
     var response = await http.get(url);
 
     var data = jsonDecode(response.body);
@@ -96,21 +96,36 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Expanded(
                 child: Container(
-                    // height: 20,
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: TextField(
                       controller: _controller,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.green,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.green,
+                            width: 2,
+                          ),
+                        ),
+                      ),
                       onChanged: (val) {
                         setState(() {
                           inputValue = val;
                         });
                       },
-                      autofocus: true,
                     ))),
             Container(
               height: 40,
               width: 100,
-              margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+              margin: EdgeInsets.fromLTRB(0, 10, 20, 10),
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
@@ -298,7 +313,7 @@ void _launchURL(String url) async =>
     await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 
 Future<String> _deleteTag(int id) async {
-  var url = Uri.parse('https://dovics.cn.utools.club/api/v1/tag/delete');
+  var url = Uri.parse('http://39.105.131.39:10001/api/v1/tag/delete');
   var response = await http.post(
     url,
     body: jsonEncode(<String, dynamic>{
@@ -322,7 +337,7 @@ void onShare() {
 }
 
 Future<String> _insertMark(String url) async {
-  var uri = Uri.parse("https://dovics.cn.utools.club/api/v1/mark/insert");
+  var uri = Uri.parse("http://39.105.131.39:10001/api/v1/mark/insert");
   var response = await http.post(
     uri,
     body: jsonEncode(<String, dynamic>{"url": url}),
