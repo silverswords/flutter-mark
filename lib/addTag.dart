@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 typedef void VoidCallback();
@@ -113,7 +113,7 @@ class AddTag extends StatelessWidget {
 }
 
 _insertTag(int markID, String tagName) async {
-  var url = Uri.parse('http://39.105.131.39:10001/api/v1/tag/insert');
+  var url = Uri.parse('https://sakura.cn.utools.club/api/v1/tag/insert');
   var response = await http.post(
     url,
     body: jsonEncode(<String, dynamic>{

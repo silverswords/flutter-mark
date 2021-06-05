@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_tags/flutter_tags.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'addTag.dart';
-import 'package:flutter_tags/flutter_tags.dart';
 
 void main() {
   runApp(MyApp());
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _getMarks() async {
-    var url = Uri.parse('http://39.105.131.39:10001/api/v1/mark/list');
+    var url = Uri.parse('https://sakura.cn.utools.club/api/v1/mark/list');
     var response = await http.get(url);
 
     var data = jsonDecode(response.body);
@@ -233,6 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   tagIndex % tagsColorCodes.length]),
                               combine: ItemTagsCombine.withTextBefore,
                               removeButton: ItemTagsRemoveButton(
+                                color: Color.fromRGBO(50, 50, 50, 0.5),
                                 onRemoved: () {
                                   _deleteTag(item.relationID).then((result) {
                                     refresh();
@@ -313,7 +314,7 @@ void _launchURL(String url) async =>
     await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 
 Future<String> _deleteTag(int id) async {
-  var url = Uri.parse('http://39.105.131.39:10001/api/v1/tag/delete');
+  var url = Uri.parse('https://sakura.cn.utools.club/api/v1/tag/delete');
   var response = await http.post(
     url,
     body: jsonEncode(<String, dynamic>{
@@ -337,7 +338,7 @@ void onShare() {
 }
 
 Future<String> _insertMark(String url) async {
-  var uri = Uri.parse("http://39.105.131.39:10001/api/v1/mark/insert");
+  var uri = Uri.parse("https://sakura.cn.utools.club/api/v1/mark/insert");
   var response = await http.post(
     uri,
     body: jsonEncode(<String, dynamic>{"url": url}),
