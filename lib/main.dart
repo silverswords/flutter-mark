@@ -5,7 +5,8 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:backdrop_modal_route/backdrop_modal_route.dart';
+import 'comment.dart';
 import 'addTag.dart';
 
 void main() {
@@ -60,6 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void refresh() {
     _getMarks();
+  }
+
+  void handleBackdropContent(BuildContext context) async {
+    await Navigator.push(
+      context,
+      BackdropModalRoute<int>(
+        overlayContentBuilder: (context) => CommentPage(1),
+      ),
+    );
   }
 
   _getMarks() async {
