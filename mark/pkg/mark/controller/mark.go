@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -142,6 +143,7 @@ func (mc *MarkController) listMark(c *gin.Context) {
 		mark.Tags = tags
 	}
 
+	fmt.Println(len(marks), "-----length get list ")
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "marks": marks})
 }
 
