@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
-import 'addTag.dart';
+import './widgets/widgets.dart';
 
 void main() {
   runApp(MyApp());
@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Mark> marks = List.empty();
   String inputValue;
+  int TagIndex;
 
   final TextEditingController _controller = new TextEditingController();
   @override
@@ -56,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _getMarks();
     inputValue = '';
+    TagIndex = 0;
   }
 
   void refresh() {
@@ -223,9 +225,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           child: Text(
                             marks[index].title,
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 18),
                           ),
                         ),
                         subtitle: Container(
@@ -236,76 +238,61 @@ class _MyHomePageState extends State<MyHomePage> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Row(
-                              children: [
-                                Tags(
-                                  itemCount: marks[index].tags.length + 1,
-                                  itemBuilder: (int tagIndex) {
-                                    if (tagIndex >= marks[index].tags.length) {
-                                      return AddTag(
-                                        marks[index].id,
-                                        tagIndex,
-                                        refresh: refresh,
-                                      );
-                                    }
+                            Container(
+                                // height: 60,
+                                child: Stack(
+                              children: <Widget>[
+                                Row(children: <Widget>[
+                                  Tags(
+                                    itemCount: marks[index].tags.length,
+                                    itemBuilder: (int tagIndex) {
+                                      TagIndex = tagIndex;
 
-                                    final item = marks[index].tags[tagIndex];
+                                      final item = marks[index].tags[tagIndex];
 
-                                    return Container(
-                                        height: 22,
-                                        child: ItemTags(
-                                          elevation: 2,
-                                          border: Border.all(
-                                              color: Color(0xffFFFFFF)),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 6, vertical: 0),
-                                          key: Key(tagIndex.toString()),
-                                          index: tagIndex,
-                                          title: item.name,
-                                          textStyle: TextStyle(
-                                            color: Color(0xff000000),
-                                            fontSize: 12,
-                                          ),
-                                          active: false,
-                                          color: Color(0xffFFFFFF),
-                                          textColor: Color(0xff000000),
-                                          textActiveColor: Color(0xff000000),
-                                          activeColor: Color(0xff607D8B),
-                                          combine:
-                                              ItemTagsCombine.withTextBefore,
-                                          removeButton: ItemTagsRemoveButton(
-                                            backgroundColor: Color(0xffFFFFFF),
-                                            color: Color(0xff000000),
-                                            onRemoved: () {
-                                              _deleteTag(item.relationID)
-                                                  .then((result) {
-                                                refresh();
-                                                Fluttertoast.showToast(
-                                                    msg: result,
-                                                    toastLength:
-                                                        Toast.LENGTH_SHORT,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.red,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0);
-                                                return true;
-                                              });
-                                              // refresh();
-
-                                              return true;
-                                            },
-                                          ),
-                                        ));
-                                  },
-                                ),
+                                      return Container(
+                                          height: 22,
+                                          margin: EdgeInsets.only(top: 6),
+                                          child: ItemTags(
+                                            elevation: 2,
+                                            border: Border.all(
+                                                color: Color(0xffFFFFFF)),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6, vertical: 0),
+                                            key: Key(tagIndex.toString()),
+                                            index: tagIndex,
+                                            title: item.name,
+                                            textStyle: TextStyle(
+                                              color: Color(0xff000000),
+                                              fontSize: 12,
+                                            ),
+                                            active: false,
+                                            color: Color(0xffFFFFFF),
+                                            textColor: Color(0xff000000),
+                                            textActiveColor: Color(0xff000000),
+                                            activeColor: Color(0xff607D8B),
+                                            combine:
+                                                ItemTagsCombine.withTextBefore,
+                                          ));
+                                    },
+                                  )
+                                ]),
+                                // Stack(children: <Widget>[
+                                Container(
+                                  height: 32,
+                                  width: 32,
+                                  margin: EdgeInsets.fromLTRB(251, 0, 0, 0),
+                                  child: AddTag(
+                                      index: index,
+                                      id: marks[index].id,
+                                      refresh: refresh),
+                                )
                               ],
-                            )
+                            )),
                           ]),
                         ),
                       ),
-                    )
+                    ),
                   ]),
                 );
               },

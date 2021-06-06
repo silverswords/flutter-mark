@@ -32,7 +32,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   fluttertoast: ^8.0.7
-
+  adaptive_dialog: ^1.0.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -47,6 +48,7 @@ flutter:
     - assets/images/default.png
     - assets/images/background.jpg
     - assets/images/download.png
+    - assets/images/morefunction.png
     
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
