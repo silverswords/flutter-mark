@@ -14,11 +14,13 @@ var (
 )
 
 type Mark struct {
-	ID    uint32     `json:"id,omitempty"`
-	Url   string     `json:"url,omitempty"`
-	Title string     `json:"title,omitempty"`
-	Icon  string     `json:"icon,omitempty"`
-	Tags  []*tag.Tag `json:"tags,omitempty"`
+	ID       uint32     `json:"id,omitempty"`
+	Url      string     `json:"url,omitempty"`
+	Title    string     `json:"title,omitempty"`
+	SubTitle string     `json:"sub_title, omitempty"`
+	Icon     string     `json:"icon,omitempty"`
+	Tags     []*tag.Tag `json:"tags,omitempty"`
+	Picture  string     `json:"picture,omitempty"`
 }
 
 const (
@@ -39,11 +41,13 @@ var (
 		id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 		url VARCHAR(512) NOT NULL DEFAULT '' COMMENT '地址',
 		title VARCHAR(512) NOT NULL DEFAULT '' COMMENT '标题',
-		icon VARCHAR(512) NOT NULL DEFAULT '' COMMENT '图标'
+		sub_title VARCHAR(512) NOT NULL DEFAULT '' COMMENT '副标题',
+		icon VARCHAR(512) NOT NULL DEFAULT '' COMMENT '图标',
+		picture VARCHAR(512) NOT NULL DEFAULT '' COMMENT '图片'
 	)ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_bin;`, DBName, MarkTableName),
-		mysqlMarkInsert: fmt.Sprintf(`INSERT INTO %s.%s (url, title, icon) VALUES (?,?,?)`, DBName, MarkTableName),
+		mysqlMarkInsert: fmt.Sprintf(`INSERT INTO %s.%s (url, title, sub_title, icon, picture) VALUES (?, ?, ?,?,?)`, DBName, MarkTableName),
 		mysqlMarkDelete: fmt.Sprintf(`DELETE FROM %s.%s WHERE id=? LIMIT 1`, DBName, MarkTableName),
-		mysqlMarkSelect: fmt.Sprintf(`SELECT id, url, title, icon FROM %s.%s`, DBName, MarkTableName),
+		mysqlMarkSelect: fmt.Sprintf(`SELECT id, url, title,sub_title, icon,picture FROM %s.%s`, DBName, MarkTableName),
 	}
 )
 
@@ -66,8 +70,8 @@ func CreateTable(db *sql.DB) error {
 }
 
 // InsertMark insert a new mark
-func InsertMark(db *sql.DB, url, title, icon string) error {
-	result, err := db.Exec(markSQLString[mysqlMarkInsert], url, title, icon)
+func InsertMark(db *sql.DB, url, title, subTitle, icon, picture string) error {
+	result, err := db.Exec(markSQLString[mysqlMarkInsert], url, title, subTitle, icon, picture)
 	if err != nil {
 		return err
 	}
@@ -97,10 +101,12 @@ func SelectMark(db *sql.DB) ([]*Mark, error) {
 	var (
 		marks []*Mark
 
-		ID    uint32
-		Url   string
-		Title string
-		Icon  string
+		ID       uint32
+		Url      string
+		Title    string
+		SubTitle string
+		Icon     string
+		Picture  string
 	)
 
 	rows, err := db.Query(markSQLString[mysqlMarkSelect])
@@ -110,15 +116,17 @@ func SelectMark(db *sql.DB) ([]*Mark, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&ID, &Url, &Title, &Icon); err != nil {
+		if err := rows.Scan(&ID, &Url, &Title, &SubTitle, &Icon, &Picture); err != nil {
 			return nil, err
 		}
 
 		mark := &Mark{
-			ID:    ID,
-			Url:   Url,
-			Title: Title,
-			Icon:  Icon,
+			ID:       ID,
+			Url:      Url,
+			Title:    Title,
+			SubTitle: SubTitle,
+			Icon:     Icon,
+			Picture:  Picture,
 		}
 
 		marks = append(marks, mark)

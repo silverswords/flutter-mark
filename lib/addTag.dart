@@ -20,10 +20,15 @@ class AddTag extends StatelessWidget {
     final _formKey = GlobalKey<FormState>();
     AwesomeDialog dialog;
     return ItemTags(
+      elevation: 2,
       key: Key(index.toString()),
       index: index, // required
       title: "add",
-      activeColor: Color(0xff26734d),
+      active: false,
+      textColor: Color(0xff000000),
+      textActiveColor: Color(0xff000000),
+      color: Color(0xffFFFFFF),
+      activeColor: Color(0xffFFFFFF),
       textStyle: TextStyle(
         fontSize: 12,
       ),
@@ -97,6 +102,7 @@ class AddTag extends StatelessWidget {
                       height: 10,
                     ),
                     AnimatedButton(
+                        color: Color(0xffEE5750),
                         text: 'Close',
                         pressEvent: () {
                           dialog.dissmiss();

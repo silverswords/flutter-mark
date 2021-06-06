@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'flutter',
       theme: ThemeData(
-        primaryColor: Color(0xff7EC87C),
+        primaryColor: Colors.white,
       ),
       home: MyHomePage(title: 'flutter'),
     );
@@ -45,13 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
     0xffA9DB8C,
     0xffC6E89A,
     0xffF5FBB7,
-  ];
-  final List<int> tagsColorCodes = <int>[
-    0xff40bf80,
-    0xff39ac73,
-    0xff339966,
-    0xff2d8659,
-    0xff26734d,
   ];
 
   List<Mark> marks = List.empty();
@@ -87,197 +80,258 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFEFFE3),
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Column(children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-                child: Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    child: TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
+      backgroundColor: Color(0xffE5E5E5),
+      body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(children: <Widget>[
+            SizedBox(height: 50),
+            Row(
+              children: <Widget>[
+                Expanded(
+                    child: Container(
+                        // color: Color(0xffF1F2F7),
+                        // height: 40,
+                        margin: EdgeInsets.fromLTRB(15, 20, 20, 10),
+                        child:
+                            // textfield -
+                            TextField(
+                          controller: _controller,
+                          cursorWidth: 2.0,
+                          // scrollPadding: EdgeInsets.symmetric(vertical: -2),
+                          decoration: InputDecoration(
+                            fillColor: Color(0xffF1F2F7),
+                            filled: true,
+                            contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 10),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                              borderSide: BorderSide(
+                                color: Color(0xffF4F5F7),
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                              borderSide: BorderSide(
+                                color: Color(0xffF4F5F7),
+                                width: 1,
+                              ),
+                            ),
                           ),
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                            width: 1,
+                          onChanged: (val) {
+                            setState(() {
+                              inputValue = val;
+                            });
+                          },
+                        ))),
+                Container(
+                  height: 40,
+                  width: 100,
+                  margin: EdgeInsets.fromLTRB(0, 20, 20, 10),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xff339BF7)),
+                    ),
+                    onPressed: () {
+                      _insertMark(inputValue).then((result) {
+                        Fluttertoast.showToast(
+                            msg: result,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                        _controller.clear();
+                        refresh();
+                      });
+                    },
+                    child: Text('分享'),
+                  ),
+                )
+              ],
+            ),
+            Expanded(
+                child: Center(
+                    child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
+              itemCount: marks.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 25),
+                  color: Color(0xffFFFFFF),
+                  elevation: 2.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  semanticContainer: false,
+                  child: Column(children: <Widget>[
+                    Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        image: NetworkImage(marks[index].picture),
+                        fit: BoxFit.cover,
+                      )),
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      // height: 240,
+                      // color: Color(colorCodes[index % colorCodes.length]),
+                      child: ListTile(
+                        leading: GestureDetector(
+                          onTap: () {
+                            _launchURL(marks[index].url);
+                          },
+                          child: Container(
+                            height: 35,
+                            width: 35,
+                            margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: marks[index].icon.startsWith("http")
+                                        ? () {
+                                            ImageProvider<Object> result;
+                                            try {
+                                              result = NetworkImage(
+                                                  marks[index].icon);
+                                            } catch (Expection) {
+                                              result = AssetImage(
+                                                  "assets/images/default.png");
+                                            }
+                                            return result;
+                                          }()
+                                        : AssetImage(
+                                            "assets/images/default.png"),
+                                    fit: BoxFit.fill)),
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                            width: 2,
+                        title: GestureDetector(
+                          onTap: () {
+                            _launchURL(marks[index].url);
+                          },
+                          child: Text(
+                            marks[index].title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 16),
                           ),
+                        ),
+                        subtitle: Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Column(children: <Widget>[
+                            Text(
+                              marks[index].sub_title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Row(
+                              children: [
+                                Tags(
+                                  itemCount: marks[index].tags.length + 1,
+                                  itemBuilder: (int tagIndex) {
+                                    if (tagIndex >= marks[index].tags.length) {
+                                      return AddTag(
+                                        marks[index].id,
+                                        tagIndex,
+                                        refresh: refresh,
+                                      );
+                                    }
+
+                                    final item = marks[index].tags[tagIndex];
+
+                                    return Container(
+                                        height: 22,
+                                        child: ItemTags(
+                                          elevation: 2,
+                                          border: Border.all(
+                                              color: Color(0xffFFFFFF)),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 0),
+                                          key: Key(tagIndex.toString()),
+                                          index: tagIndex,
+                                          title: item.name,
+                                          textStyle: TextStyle(
+                                            color: Color(0xff000000),
+                                            fontSize: 12,
+                                          ),
+                                          active: false,
+                                          color: Color(0xffFFFFFF),
+                                          textColor: Color(0xff000000),
+                                          textActiveColor: Color(0xff000000),
+                                          activeColor: Color(0xff607D8B),
+                                          combine:
+                                              ItemTagsCombine.withTextBefore,
+                                          removeButton: ItemTagsRemoveButton(
+                                            backgroundColor: Color(0xffFFFFFF),
+                                            color: Color(0xff000000),
+                                            onRemoved: () {
+                                              _deleteTag(item.relationID)
+                                                  .then((result) {
+                                                refresh();
+                                                Fluttertoast.showToast(
+                                                    msg: result,
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                                return true;
+                                              });
+                                              // refresh();
+
+                                              return true;
+                                            },
+                                          ),
+                                        ));
+                                  },
+                                ),
+                              ],
+                            )
+                          ]),
                         ),
                       ),
-                      onChanged: (val) {
-                        setState(() {
-                          inputValue = val;
-                        });
-                      },
-                    ))),
-            Container(
-              height: 40,
-              width: 100,
-              margin: EdgeInsets.fromLTRB(0, 10, 20, 10),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Color(0xff7EC87C)),
-                ),
-                onPressed: () {
-                  _insertMark(inputValue).then((result) {
-                    Fluttertoast.showToast(
-                        msg: result,
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                    _controller.clear();
-                    refresh();
-                  });
-                },
-                child: Text('分享'),
-              ),
-            )
-          ],
-        ),
-        Expanded(
-            child: Center(
-                child: ListView.separated(
-          padding: const EdgeInsets.all(8),
-          itemCount: marks.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              color: Colors.blueAccent,
-              elevation: 20.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              ),
-              clipBehavior: Clip.antiAlias,
-              semanticContainer: false,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                color: Color(colorCodes[index % colorCodes.length]),
-                child: ListTile(
-                  leading: GestureDetector(
-                    onTap: () {
-                      _launchURL(marks[index].url);
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: marks[index].icon.startsWith("http")
-                                  ? () {
-                                      ImageProvider<Object> result;
-                                      try {
-                                        result =
-                                            NetworkImage(marks[index].icon);
-                                      } catch (Expection) {
-                                        result = AssetImage(
-                                            "assets/images/default.png");
-                                      }
-                                      return result;
-                                    }()
-                                  : AssetImage("assets/images/default.png"),
-                              fit: BoxFit.fill)),
-                    ),
-                  ),
-                  title: GestureDetector(
-                    onTap: () {
-                      _launchURL(marks[index].url);
-                    },
-                    child: Text(
-                      marks[index].title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  subtitle: Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Row(
-                      children: [
-                        Tags(
-                          itemCount: marks[index].tags.length + 1,
-                          itemBuilder: (int tagIndex) {
-                            if (tagIndex >= marks[index].tags.length) {
-                              return AddTag(
-                                marks[index].id,
-                                tagIndex,
-                                refresh: refresh,
-                              );
-                            }
-
-                            final item = marks[index].tags[tagIndex];
-
-                            return ItemTags(
-                              key: Key(tagIndex.toString()),
-                              index: tagIndex,
-                              title: item.name,
-                              textStyle: TextStyle(
-                                fontSize: 12,
-                              ),
-                              activeColor: Color(tagsColorCodes[
-                                  tagIndex % tagsColorCodes.length]),
-                              combine: ItemTagsCombine.withTextBefore,
-                              removeButton: ItemTagsRemoveButton(
-                                color: Color.fromRGBO(50, 50, 50, 0.5),
-                                onRemoved: () {
-                                  _deleteTag(item.relationID).then((result) {
-                                    refresh();
-                                    Fluttertoast.showToast(
-                                        msg: result,
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.red,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0);
-                                    return true;
-                                  });
-                                  // refresh();
-
-                                  return true;
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
-        )))
-      ]),
+                    )
+                  ]),
+                );
+              },
+            )))
+          ])),
     );
   }
 }
 
 class Mark {
   int id;
+  String sub_title;
   String url;
   String title;
   String icon;
+  String picture;
   List<TagRelation> tags;
 
-  Mark({this.id, this.url, this.title, this.icon, this.tags});
+  Mark(
+      {this.id,
+      this.url,
+      this.title,
+      this.sub_title,
+      this.icon,
+      this.picture,
+      this.tags});
 
   factory Mark.fromJson(Map<String, dynamic> json) {
     List<TagRelation> tags = List.empty(growable: true);
@@ -291,6 +345,8 @@ class Mark {
       id: json['id'],
       url: json['url'],
       title: json['title'],
+      sub_title: json['sub_title'],
+      picture: json['picture'],
       icon: json['icon'],
       tags: tags,
     );
@@ -341,7 +397,10 @@ Future<String> _insertMark(String url) async {
   var uri = Uri.parse("https://sakura.cn.utools.club/api/v1/mark/insert");
   var response = await http.post(
     uri,
-    body: jsonEncode(<String, dynamic>{"url": url}),
+    body: jsonEncode(<String, dynamic>{
+      "url": "https://api.microlink.io?url=" + url,
+      "baseUrl": url
+    }),
   );
 
   if (response.statusCode != 200) {
