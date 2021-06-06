@@ -1,6 +1,6 @@
-# dialog
+# resource-sharing
 
-A new Flutter project.
+An APP that shares excellent resources
 
 ## Getting Started
 
