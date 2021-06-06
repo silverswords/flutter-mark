@@ -48,3 +48,20 @@ Future<dynamic> getMarks() async {
 
   return list;
 }
+
+insertTag(int markID, String tagName) async {
+  var url = Uri.parse('https://sakura.cn.utools.club/api/v1/tag/insert');
+  var response = await http.post(
+    url,
+    body: jsonEncode(<String, dynamic>{
+      'mark_id': markID,
+      'tag_name': tagName,
+    }),
+  );
+
+  if (response.statusCode != 200) {
+    return "添加失败";
+  }
+
+  return "添加成功";
+}

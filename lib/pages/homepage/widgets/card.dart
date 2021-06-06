@@ -23,8 +23,6 @@ Card CustomerCard(
         ),
         Container(
           padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-          // height: 240,
-          // color: Color(colorCodes[index % colorCodes.length]),
           child: ListTile(
             leading: GestureDetector(
               onTap: () {
@@ -73,7 +71,6 @@ Card CustomerCard(
                     overflow: TextOverflow.ellipsis,
                   ),
                   Container(
-                    // height: 60,
                     child: Stack(
                       children: <Widget>[
                         Row(
@@ -100,10 +97,10 @@ Card CustomerCard(
                                       fontSize: 12,
                                     ),
                                     active: false,
-                                    color: Color(0xffFFFFFF),
+                                    color: Color(0xffF4F5F7),
                                     textColor: Color(0xff000000),
                                     textActiveColor: Color(0xff000000),
-                                    activeColor: Color(0xff607D8B),
+                                    activeColor: Color(0xffDCDCDC),
                                     combine: ItemTagsCombine.withTextBefore,
                                   ),
                                 );
@@ -119,7 +116,7 @@ Card CustomerCard(
                             child: IconButton(
                                 onPressed: () {
                                   moreFunction(
-                                      context, index, marks[index].id, refresh);
+                                      context, marks[index].id, refresh);
                                 },
                                 icon: Image.asset(
                                     'assets/images/morefunction.png')))
@@ -136,8 +133,7 @@ Card CustomerCard(
   );
 }
 
-moreFunction(
-    BuildContext context, int index, int id, Function() refresh) async {
+moreFunction(BuildContext context, int id, Function() refresh) async {
   await showDialog<int>(
     context: context,
     builder: (BuildContext context) {
@@ -146,7 +142,7 @@ moreFunction(
         children: <Widget>[
           SimpleDialogOption(
             onPressed: () {
-              addTag(context, index, id, refresh);
+              addTag(context, id, refresh);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
