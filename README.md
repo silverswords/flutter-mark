@@ -1,4 +1,4 @@
-# dialog
+# resource-sharing
 
 An APP that shares excellent resources
 
