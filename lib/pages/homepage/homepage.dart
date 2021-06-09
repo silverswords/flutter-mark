@@ -15,15 +15,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Mark> marks = List.empty();
   String inputValue;
-  int TagIndex;
 
-  final TextEditingController _controller = new TextEditingController();
   @override
   void initState() {
     super.initState();
     _refresh();
     inputValue = '';
-    TagIndex = 0;
   }
 
   _refresh() async {

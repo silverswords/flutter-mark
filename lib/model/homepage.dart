@@ -1,6 +1,6 @@
 class Mark {
   int id;
-  String sub_title;
+  String subTitle;
   String url;
   String title;
   String icon;
@@ -11,7 +11,7 @@ class Mark {
       {this.id,
       this.url,
       this.title,
-      this.sub_title,
+      this.subTitle,
       this.icon,
       this.picture,
       this.tags});
@@ -28,7 +28,7 @@ class Mark {
       id: json['id'],
       url: json['url'],
       title: json['title'],
-      sub_title: json['sub_title'],
+      subTitle: json['sub_title'],
       picture: json['picture'],
       icon: json['icon'],
       tags: tags,

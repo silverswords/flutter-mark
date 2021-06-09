@@ -16,10 +16,11 @@ Card CustomerCard(
         Container(
           height: 200,
           decoration: BoxDecoration(
-              image: DecorationImage(
-            image: NetworkImage(marks[index].picture),
-            fit: BoxFit.cover,
-          )),
+            image: DecorationImage(
+              image: NetworkImage(marks[index].picture),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
         Container(
           padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -33,21 +34,22 @@ Card CustomerCard(
                 width: 35,
                 margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: marks[index].icon.startsWith("http")
-                            ? () {
-                                ImageProvider<Object> result;
-                                try {
-                                  result = NetworkImage(marks[index].icon);
-                                } catch (Expection) {
-                                  result =
-                                      AssetImage("assets/images/default.png");
-                                }
-                                return result;
-                              }()
-                            : AssetImage("assets/images/default.png"),
-                        fit: BoxFit.fill)),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      image: marks[index].icon.startsWith("http")
+                          ? () {
+                              ImageProvider<Object> result;
+                              try {
+                                result = NetworkImage(marks[index].icon);
+                              } catch (Expection) {
+                                result =
+                                    AssetImage("assets/images/default.png");
+                              }
+                              return result;
+                            }()
+                          : AssetImage("assets/images/default.png"),
+                      fit: BoxFit.fill),
+                ),
               ),
             ),
             title: GestureDetector(
@@ -66,7 +68,7 @@ Card CustomerCard(
               child: Column(
                 children: <Widget>[
                   Text(
-                    marks[index].sub_title,
+                    marks[index].subTitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -110,16 +112,16 @@ Card CustomerCard(
                         ),
                         // Stack(children: <Widget>[
                         Container(
-                            height: 32,
-                            width: 32,
-                            margin: EdgeInsets.fromLTRB(251, 0, 0, 0),
-                            child: IconButton(
-                                onPressed: () {
-                                  moreFunction(
-                                      context, marks[index].id, refresh);
-                                },
-                                icon: Image.asset(
-                                    'assets/images/morefunction.png')))
+                          height: 32,
+                          width: 32,
+                          margin: EdgeInsets.fromLTRB(251, 0, 0, 0),
+                          child: IconButton(
+                            onPressed: () {
+                              moreFunction(context, marks[index].id, refresh);
+                            },
+                            icon: Image.asset('assets/images/morefunction.png'),
+                          ),
+                        ),
                       ],
                     ),
                   ),

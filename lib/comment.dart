@@ -20,7 +20,7 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   List<Widget> buildList() {
-    List<Widget> result =List.empty(growable: true);
+    List<Widget> result = List.empty(growable: true);
     for (var comment in comments) {
       result.add(buildComment(comment));
     }
@@ -29,10 +29,9 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   Widget buildComment(Comment c) {
-    return ListTile(
-      title: Text(c.content)
-    );
+    return ListTile(title: Text(c.content));
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,45 +42,47 @@ class _CommentPageState extends State<CommentPage> {
           Row(
             children: <Widget>[
               Expanded(
-                  child: Container(
-                      // color: Color(0xffF1F2F7),
-                      // height: 40,
-                      margin: EdgeInsets.fromLTRB(15, 20, 20, 10),
-                      child:
-                          // textfield -
-                          TextField(
-                        controller: _controller,
-                        cursorWidth: 2.0,
-                        // scrollPadding: EdgeInsets.symmetric(vertical: -2),
-                        decoration: InputDecoration(
-                          fillColor: Color(0xffF1F2F7),
-                          filled: true,
-                          contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 10),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(30),
-                            ),
-                            borderSide: BorderSide(
-                              color: Color(0xffF4F5F7),
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(30),
-                            ),
-                            borderSide: BorderSide(
-                              color: Color(0xffF4F5F7),
-                              width: 1,
-                            ),
-                          ),
+                child: Container(
+                  // color: Color(0xffF1F2F7),
+                  // height: 40,
+                  margin: EdgeInsets.fromLTRB(15, 20, 20, 10),
+                  child:
+                      // textfield -
+                      TextField(
+                    controller: _controller,
+                    cursorWidth: 2.0,
+                    // scrollPadding: EdgeInsets.symmetric(vertical: -2),
+                    decoration: InputDecoration(
+                      fillColor: Color(0xffF1F2F7),
+                      filled: true,
+                      contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 10),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30),
                         ),
-                        onChanged: (val) {
-                          setState(() {
-                            inputValue = val;
-                          });
-                        },
-                      ))),
+                        borderSide: BorderSide(
+                          color: Color(0xffF4F5F7),
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                        borderSide: BorderSide(
+                          color: Color(0xffF4F5F7),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      setState(() {
+                        inputValue = val;
+                      });
+                    },
+                  ),
+                ),
+              ),
               Container(
                 height: 40,
                 width: 100,
@@ -104,16 +105,11 @@ class _CommentPageState extends State<CommentPage> {
   }
 }
 
-
 class Comment {
   int id;
   String content;
   String createTime;
-  Comment(
-      {this.id,
-      this.content,
-      this.createTime
-      });
+  Comment({this.id, this.content, this.createTime});
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
